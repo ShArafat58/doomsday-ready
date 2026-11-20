@@ -263,7 +263,6 @@ docker compose exec backend python -m pytest
 * After the first deploy, the live site showed `502` errors because the free backend was asleep. The frontend now retries read requests while the server wakes up and shows a loading message.
 
 ### How AI made me faster
-* Claude gave each step as one terminal command that wrote several files at once, so I did not create files by hand.
 * Instead of clicking through Swagger, we checked many API cases with one small Python script.
 * The pytest suite let me check all the expected results again in seconds after every change.
 * Claude compressed the images (from 3.9 MB to 336 KB), so the live site loads faster.
