@@ -24,6 +24,7 @@ class Movie(Base):
     release_year: Mapped[int]
     runtime_minutes: Mapped[int]
     watched: Mapped[bool] = mapped_column(default=False)
+    description: Mapped[str | None] = mapped_column(String(500), default=None)
 
     prerequisites: Mapped[list["Movie"]] = relationship(
         secondary=movie_prerequisites,

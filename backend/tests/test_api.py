@@ -122,3 +122,16 @@ def test_booking_rejects_group_size_out_of_range(client, group_size):
     assert response.status_code == 422
 def test_booking_for_unknown_cinema_returns_404(client):
     assert client.get("/api/cinemas/99999/booking", params={"groupSize": 5}).status_code == 404
+# Description
+def test_sample_movies_have_descriptions(client):
+    movies = client.get("/api/movies").json()
+    assert all(m["description"] for m in movies)
+def test_description_is_optional_and_can_be_updated(client):
+    created = client.post(
+        "/api/movies", json={"title": "Thor", "releaseYear": 2011, "runtimeMinutes": 115}
+    ).json()
+    assert created["description"] is None
+    updated = client.patch(
+        f"/api/movies/{created['id']}", json={"description": "The god of thunder is sent to Earth."}
+    ).json()
+    assert updated["description"] == "The god of thunder is sent to Earth."

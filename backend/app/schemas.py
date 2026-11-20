@@ -14,18 +14,21 @@ class MovieCreate(CamelModel):
     runtime_minutes: int = Field(ge=1, le=300)
     prerequisite_ids: list[int] = Field(default_factory=list)
     watched: bool = False
+    description: str | None = Field(default=None, max_length=500)
 class MovieUpdate(CamelModel):
     title: str | None = Field(default=None, min_length=1, max_length=200)
     release_year: int | None = Field(default=None, ge=1900, le=2100)
     runtime_minutes: int | None = Field(default=None, ge=1, le=300)
     prerequisite_ids: list[int] | None = None
     watched: bool | None = None
+    description: str | None = Field(default=None, max_length=500)
 class MovieRead(CamelModel):
     id: int
     title: str
     release_year: int
     runtime_minutes: int
     watched: bool
+    description: str | None
     prerequisite_ids: list[int]
 # Rewatch plan
 class RewatchPlan(CamelModel):

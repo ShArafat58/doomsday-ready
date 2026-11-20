@@ -189,13 +189,13 @@ export default function MoviesView() {
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div>
+                        <div className="min-w-0">
                           <h3 className="text-base font-bold text-white sm:text-xl">{movie.title}</h3>
                           <p className="mt-1 text-sm text-emerald-200/70 sm:text-base">
                             {movie.releaseYear} {'\u00b7'} {formatRuntime(movie.runtimeMinutes)}
                           </p>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex shrink-0 items-center gap-3">
                           <label className="flex items-center gap-2 text-sm">
                             <input
                               type="checkbox"
@@ -212,6 +212,11 @@ export default function MoviesView() {
                           )}
                         </div>
                       </div>
+                      {movie.description && (
+                        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-emerald-50/85 sm:text-base">
+                          {movie.description}
+                        </p>
+                      )}
                       {editingId === movie.id ? (
                         <div className="mt-4 space-y-3 border-t border-emerald-900/60 pt-4">
                           <span className={labelClass}>Watch these first</span>

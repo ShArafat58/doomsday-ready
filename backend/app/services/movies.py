@@ -18,6 +18,7 @@ def to_read(movie: Movie) -> MovieRead:
         release_year=movie.release_year,
         runtime_minutes=movie.runtime_minutes,
         watched=movie.watched,
+        description=movie.description,
         prerequisite_ids=sorted(p.id for p in movie.prerequisites),
     )
 
@@ -100,6 +101,7 @@ def create_movie(db: Session, payload: MovieCreate) -> Movie:
         release_year=payload.release_year,
         runtime_minutes=payload.runtime_minutes,
         watched=payload.watched,
+        description=payload.description,
         prerequisites=prerequisites,
     )
     db.add(movie)
@@ -112,7 +114,7 @@ def update_movie(db: Session, movie_id: int, payload: MovieUpdate) -> Movie:
     movie = get_movie(db, movie_id)
     changes = payload.model_dump(exclude_unset=True)
 
-    null_fields = [to_camel(name) for name, value in changes.items() if value is None]
+    null_fields = [to_camel(name) for name, value in changes.items() if value is None and name != "description"]
     if null_fields:
         raise AppError(422, "VALIDATION_ERROR", f"These fields cannot be null: {null_fields}.")
 
@@ -124,7 +126,7 @@ def update_movie(db: Session, movie_id: int, payload: MovieUpdate) -> Movie:
         new_prerequisites = _load_prerequisites(db, changes["prerequisite_ids"])
         _ensure_no_cycle(db, movie, new_prerequisites)
 
-    for field in ("title", "release_year", "runtime_minutes", "watched"):
+    for field in ("title", "release_year", "runtime_minutes", "watched", "description"):
         if field in changes:
             setattr(movie, field, changes[field])
     if new_prerequisites is not None:

@@ -116,8 +116,17 @@ export default function RewatchView() {
                     <p className="mt-1 text-sm text-emerald-200/70 sm:text-base">
                       {movie.releaseYear} {'\u00b7'} {formatRuntime(movie.runtimeMinutes)}
                     </p>
+                    {movie.description && (
+                      <p
+                        className={`mt-2 line-clamp-3 text-sm leading-relaxed sm:line-clamp-none ${
+                          movie.watched ? 'text-emerald-100/50' : 'text-emerald-50/85'
+                        }`}
+                      >
+                        {movie.description}
+                      </p>
+                    )}
                   </div>
-                  <label className="flex items-center gap-2 text-sm">
+                  <label className="flex shrink-0 items-center gap-2 text-sm">
                     <input
                       type="checkbox"
                       checked={movie.watched}
@@ -133,8 +142,13 @@ export default function RewatchView() {
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-400 text-xs font-bold text-black sm:h-8 sm:w-8 sm:text-sm">
                   {'\u2605'}
                 </span>
-                <Poster title={plan.target.title} className="h-16 w-11 ring-2 ring-amber-400 sm:h-20 sm:w-14" />
-                <p className="text-base font-bold text-amber-100 sm:text-xl">Then watch {plan.target.title}</p>
+                <Poster title={plan.target.title} className="h-24 w-16 ring-2 ring-amber-400 sm:h-36 sm:w-24" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-base font-bold text-amber-100 sm:text-xl">Then watch {plan.target.title}</p>
+                  {plan.target.description && (
+                    <p className="mt-2 text-sm leading-relaxed text-amber-50/80">{plan.target.description}</p>
+                  )}
+                </div>
               </li>
             </ol>
           )}

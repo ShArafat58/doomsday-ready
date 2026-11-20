@@ -4,6 +4,7 @@
   releaseYear: number
   runtimeMinutes: number
   watched: boolean
+  description: string | null
   prerequisiteIds: number[]
 }
 export type MovieInput = {

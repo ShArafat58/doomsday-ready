@@ -20,6 +20,7 @@ def session_factory():
             conn.execute(text(f'CREATE DATABASE "{TEST_DB_NAME}"'))
     admin.dispose()
     engine = create_engine(main_url.set(database=TEST_DB_NAME))
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     yield sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
     engine.dispose()
