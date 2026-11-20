@@ -39,3 +39,18 @@ def _build_cycle_path(parent: dict[int, int], movie_id: int) -> list[int]:
     path.append(movie_id)
     path.reverse()
     return path
+# Rewatch order (topological sort with DFS post-order)
+# A movie is added only after all of its prerequisites are added.
+def rewatch_order(graph: Graph, target_id: int) -> list[int]:
+    order: list[int] = []
+    visited: set[int] = {target_id}
+    def visit(movie_id: int) -> None:
+        visited.add(movie_id)
+        for prerequisite_id in graph.get(movie_id, []):
+            if prerequisite_id not in visited:
+                visit(prerequisite_id)
+        order.append(movie_id)
+    for prerequisite_id in graph.get(target_id, []):
+        if prerequisite_id not in visited:
+            visit(prerequisite_id)
+    return order

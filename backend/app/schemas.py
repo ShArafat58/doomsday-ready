@@ -35,3 +35,10 @@ class MovieRead(CamelModel):
     runtime_minutes: int
     watched: bool
     prerequisite_ids: list[int]
+# Rewatch plan
+class RewatchPlan(CamelModel):
+    target: MovieRead
+    movies: list[MovieRead]
+    total_count: int
+    watched_count: int
+    unwatched_runtime_minutes: int
