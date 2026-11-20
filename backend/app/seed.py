@@ -1,4 +1,5 @@
-﻿from sqlalchemy import text
+﻿import sys
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 from app import models  # noqa: F401  (import registers the tables)
 from app.database import Base, SessionLocal, engine
@@ -38,10 +39,13 @@ def load_sample_data(db: Session) -> None:
     for name, sizes in CINEMAS:
         db.add(Cinema(name=name, bundle_sizes=[CinemaBundleSize(size=s) for s in sizes]))
     db.commit()
-def seed() -> None:
+def seed(only_if_empty: bool = False) -> None:
     Base.metadata.create_all(bind=engine)
     with SessionLocal() as db:
+        if only_if_empty and db.scalar(select(func.count()).select_from(Movie)):
+            print("Database already has data, skipping seed.")
+            return
         load_sample_data(db)
     print(f"Seeded {len(MOVIES)} movies and {len(CINEMAS)} cinemas.")
 if __name__ == "__main__":
-    seed()
+    seed(only_if_empty="--if-empty" in sys.argv)
