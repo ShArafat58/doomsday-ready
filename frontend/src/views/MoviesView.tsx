@@ -185,13 +185,13 @@ export default function MoviesView() {
                   <div className="flex gap-4">
                     <Poster
                       title={movie.title}
-                      className={`h-20 w-14 sm:h-28 sm:w-20 ${movie.watched ? 'opacity-50 grayscale' : ''}`}
+                      className={`h-24 w-16 sm:h-36 sm:w-24 ${movie.watched ? 'opacity-50 grayscale' : ''}`}
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <h3 className="text-base font-semibold text-white sm:text-lg">{movie.title}</h3>
-                          <p className="text-sm text-emerald-200/70">
+                          <h3 className="text-base font-bold text-white sm:text-xl">{movie.title}</h3>
+                          <p className="mt-1 text-sm text-emerald-200/70 sm:text-base">
                             {movie.releaseYear} {'\u00b7'} {formatRuntime(movie.runtimeMinutes)}
                           </p>
                         </div>
@@ -201,7 +201,7 @@ export default function MoviesView() {
                               type="checkbox"
                               checked={movie.watched}
                               onChange={() => toggleWatched(movie)}
-                              className="h-4 w-4 accent-amber-400"
+                              className="h-5 w-5 accent-amber-400"
                             />
                             Watched
                           </label>
@@ -229,14 +229,14 @@ export default function MoviesView() {
                         </div>
                       ) : (
                         <div className="mt-3 flex flex-wrap items-center gap-2">
-                          <span className="text-xs text-emerald-200/60">Watch first:</span>
+                          <span className="text-sm text-emerald-200/60">Watch first:</span>
                           {movie.prerequisiteIds.length === 0 ? (
-                            <span className="text-xs text-emerald-200/50">nothing</span>
+                            <span className="text-sm text-emerald-200/50">nothing</span>
                           ) : (
                             movie.prerequisiteIds.map((id) => (
                               <span
                                 key={id}
-                                className="rounded-full border border-emerald-800 px-2.5 py-0.5 text-xs text-emerald-200/80"
+                                className="rounded-full border border-emerald-800 px-3 py-1 text-sm text-emerald-200/80"
                               >
                                 {titles.get(id)}
                               </span>
