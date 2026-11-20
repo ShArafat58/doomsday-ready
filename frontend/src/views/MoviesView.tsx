@@ -174,7 +174,7 @@ export default function MoviesView() {
           Movies ({movies.length})
         </h2>
         {loading ? (
-          <p className="text-emerald-200/70">Loading movies...</p>
+          <p className="text-emerald-200/70">Loading movies... The free server can take up to a minute to wake up.</p>
         ) : movies.length === 0 ? (
           <Card>No movies yet. Add the first one above.</Card>
         ) : (

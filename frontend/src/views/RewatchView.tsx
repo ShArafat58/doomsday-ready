@@ -56,6 +56,12 @@ export default function RewatchView() {
         </select>
       </Card>
       <ErrorBox error={error} />
+
+      {!plan && !error && (
+        <Card>
+          <p className="text-emerald-100/80">Loading the rewatch plan... The free server can take up to a minute to wake up.</p>
+        </Card>
+      )}
       {plan && (
         <Card>
           <div className="flex flex-wrap items-end justify-between gap-2">

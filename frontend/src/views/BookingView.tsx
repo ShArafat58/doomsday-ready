@@ -109,6 +109,12 @@ export default function BookingView() {
         </form>
       </Card>
       <ErrorBox error={error} />
+
+      {cinemas.length === 0 && !error && (
+        <Card>
+          <p className="text-emerald-100/80">Loading cinemas... The free server can take up to a minute to wake up.</p>
+        </Card>
+      )}
       {quote &&
         (quote.possible ? (
           <Card className="border-amber-400/50">

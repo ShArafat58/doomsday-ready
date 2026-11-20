@@ -45,15 +45,36 @@ export class ApiError extends Error {
     this.details = details
   }
 }
+// The free backend sleeps when idle, so read requests wait and retry while it wakes up.
+const WAKING_STATUSES = [502, 503, 504]
+const RETRY_DELAY_MS = 10_000
+const MAX_ATTEMPTS = 7
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  let response: Response
-  try {
-    response = await fetch(`/api${path}`, {
-      headers: { 'Content-Type': 'application/json' },
-      ...init,
-    })
-  } catch {
-    throw new ApiError(0, 'NETWORK_ERROR', 'Cannot reach the server. Is the backend running?')
+  const canRetry = !init?.method || init.method === 'GET'
+  const attempts = canRetry ? MAX_ATTEMPTS : 1
+  let response: Response | undefined
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      response = await fetch(`/api${path}`, {
+        headers: { 'Content-Type': 'application/json' },
+        ...init,
+      })
+      if (!WAKING_STATUSES.includes(response.status)) break
+    } catch {
+      response = undefined
+    }
+    if (attempt < attempts) await sleep(RETRY_DELAY_MS)
+  }
+  if (!response) {
+    throw new ApiError(0, 'NETWORK_ERROR', 'Cannot reach the server. Please check your connection and try again.')
+  }
+  if (WAKING_STATUSES.includes(response.status)) {
+    throw new ApiError(
+      response.status,
+      'SERVER_WAKING',
+      'The server is still waking up. Please wait a minute and reload the page.',
+    )
   }
   const body = await response.json().catch(() => null)
   if (!response.ok) {
