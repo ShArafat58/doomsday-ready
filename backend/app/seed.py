@@ -1,4 +1,5 @@
 ﻿from sqlalchemy import text
+from sqlalchemy.orm import Session
 from app import models  # noqa: F401  (import registers the tables)
 from app.database import Base, SessionLocal, engine
 from app.models import Cinema, CinemaBundleSize, Movie
@@ -19,26 +20,28 @@ CINEMAS = [
     ("Quantum Theatre", [6, 9, 20]),
     ("Orbit Hall", [4, 6]),
 ]
+def load_sample_data(db: Session) -> None:
+    db.execute(text(
+        "TRUNCATE movie_prerequisites, movies, cinema_bundle_sizes, cinemas "
+        "RESTART IDENTITY CASCADE"
+    ))
+    by_title: dict[str, Movie] = {}
+    for title, year, runtime, prerequisites in MOVIES:
+        movie = Movie(
+            title=title,
+            release_year=year,
+            runtime_minutes=runtime,
+            prerequisites=[by_title[p] for p in prerequisites],
+        )
+        db.add(movie)
+        by_title[title] = movie
+    for name, sizes in CINEMAS:
+        db.add(Cinema(name=name, bundle_sizes=[CinemaBundleSize(size=s) for s in sizes]))
+    db.commit()
 def seed() -> None:
     Base.metadata.create_all(bind=engine)
     with SessionLocal() as db:
-        db.execute(text(
-            "TRUNCATE movie_prerequisites, movies, cinema_bundle_sizes, cinemas "
-            "RESTART IDENTITY CASCADE"
-        ))
-        by_title: dict[str, Movie] = {}
-        for title, year, runtime, prerequisites in MOVIES:
-            movie = Movie(
-                title=title,
-                release_year=year,
-                runtime_minutes=runtime,
-                prerequisites=[by_title[p] for p in prerequisites],
-            )
-            db.add(movie)
-            by_title[title] = movie
-        for name, sizes in CINEMAS:
-            db.add(Cinema(name=name, bundle_sizes=[CinemaBundleSize(size=s) for s in sizes]))
-        db.commit()
+        load_sample_data(db)
     print(f"Seeded {len(MOVIES)} movies and {len(CINEMAS)} cinemas.")
 if __name__ == "__main__":
     seed()
