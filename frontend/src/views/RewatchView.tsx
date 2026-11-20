@@ -103,17 +103,17 @@ export default function RewatchView() {
                   </span>
                   <Poster
                     title={movie.title}
-                    className={`h-16 w-11 sm:h-20 sm:w-14 ${movie.watched ? 'opacity-50 grayscale' : ''}`}
+                    className={`h-24 w-16 sm:h-36 sm:w-24 ${movie.watched ? 'opacity-50 grayscale' : ''}`}
                   />
                   <div className="min-w-0 flex-1">
                     <p
-                      className={`text-sm font-semibold sm:text-base ${
+                      className={`text-base font-bold sm:text-xl ${
                         movie.watched ? 'text-emerald-200/60' : 'text-white'
                       }`}
                     >
                       {movie.title}
                     </p>
-                    <p className="text-xs text-emerald-200/60">
+                    <p className="mt-1 text-sm text-emerald-200/70 sm:text-base">
                       {movie.releaseYear} {'\u00b7'} {formatRuntime(movie.runtimeMinutes)}
                     </p>
                   </div>
@@ -134,7 +134,7 @@ export default function RewatchView() {
                   {'\u2605'}
                 </span>
                 <Poster title={plan.target.title} className="h-16 w-11 ring-2 ring-amber-400 sm:h-20 sm:w-14" />
-                <p className="text-sm font-semibold text-amber-100 sm:text-base">Then watch {plan.target.title}</p>
+                <p className="text-base font-bold text-amber-100 sm:text-xl">Then watch {plan.target.title}</p>
               </li>
             </ol>
           )}

@@ -2,6 +2,7 @@
 import type { FormEvent } from 'react'
 import { api, formatRuntime } from '../api'
 import type { Movie } from '../api'
+import Poster from '../Poster'
 import { inputClass, labelClass, primaryButton, secondaryButton } from '../styles'
 import { Card, ErrorBox } from '../ui'
 const byYearThenTitle = (a: Movie, b: Movie) =>
@@ -169,7 +170,9 @@ export default function MoviesView() {
       </Card>
       <ErrorBox error={error} />
       <section>
-        <h2 className="mb-3 text-xl font-bold text-white">Movies ({movies.length})</h2>
+        <h2 className="mb-3 text-xl font-bold text-white [text-shadow:0_2px_6px_rgb(0_0_0/0.9)]">
+          Movies ({movies.length})
+        </h2>
         {loading ? (
           <p className="text-emerald-200/70">Loading movies...</p>
         ) : movies.length === 0 ? (
@@ -179,61 +182,70 @@ export default function MoviesView() {
             {movies.map((movie) => (
               <li key={movie.id}>
                 <Card>
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">{movie.title}</h3>
-                      <p className="text-sm text-emerald-200/70">
-                        {movie.releaseYear} {'\u00b7'} {formatRuntime(movie.runtimeMinutes)}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <label className="flex cursor-pointer items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={movie.watched}
-                          onChange={() => toggleWatched(movie)}
-                          className="h-4 w-4 accent-amber-400"
-                        />
-                        Watched
-                      </label>
-                      {editingId !== movie.id && (
-                        <button onClick={() => startEdit(movie)} className={secondaryButton}>
-                          Edit prerequisites
-                        </button>
+                  <div className="flex gap-4">
+                    <Poster
+                      title={movie.title}
+                      className={`h-20 w-14 sm:h-28 sm:w-20 ${movie.watched ? 'opacity-50 grayscale' : ''}`}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <h3 className="text-base font-semibold text-white sm:text-lg">{movie.title}</h3>
+                          <p className="text-sm text-emerald-200/70">
+                            {movie.releaseYear} {'\u00b7'} {formatRuntime(movie.runtimeMinutes)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <label className="flex items-center gap-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={movie.watched}
+                              onChange={() => toggleWatched(movie)}
+                              className="h-4 w-4 accent-amber-400"
+                            />
+                            Watched
+                          </label>
+                          {editingId !== movie.id && (
+                            <button onClick={() => startEdit(movie)} className={secondaryButton}>
+                              Edit prerequisites
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      {editingId === movie.id ? (
+                        <div className="mt-4 space-y-3 border-t border-emerald-900/60 pt-4">
+                          <span className={labelClass}>Watch these first</span>
+                          <PrerequisitePicker
+                            movies={movies}
+                            selected={draft}
+                            onChange={setDraft}
+                            excludeId={movie.id}
+                          />
+                          <ErrorBox error={editError} />
+                          <div className="flex gap-2">
+                            <button onClick={() => saveEdit(movie)} className={primaryButton}>Save</button>
+                            <button onClick={() => setEditingId(null)} className={secondaryButton}>Cancel</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <span className="text-xs text-emerald-200/60">Watch first:</span>
+                          {movie.prerequisiteIds.length === 0 ? (
+                            <span className="text-xs text-emerald-200/50">nothing</span>
+                          ) : (
+                            movie.prerequisiteIds.map((id) => (
+                              <span
+                                key={id}
+                                className="rounded-full border border-emerald-800 px-2.5 py-0.5 text-xs text-emerald-200/80"
+                              >
+                                {titles.get(id)}
+                              </span>
+                            ))
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
-                  {editingId === movie.id ? (
-                    <div className="mt-4 space-y-3 border-t border-emerald-900/60 pt-4">
-                      <span className={labelClass}>Watch these first</span>
-                      <PrerequisitePicker
-                        movies={movies}
-                        selected={draft}
-                        onChange={setDraft}
-                        excludeId={movie.id}
-                      />
-                      <ErrorBox error={editError} />
-                      <div className="flex gap-2">
-                        <button onClick={() => saveEdit(movie)} className={primaryButton}>Save</button>
-                        <button onClick={() => setEditingId(null)} className={secondaryButton}>Cancel</button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {movie.prerequisiteIds.length === 0 ? (
-                        <span className="text-xs text-emerald-200/50">No prerequisites</span>
-                      ) : (
-                        movie.prerequisiteIds.map((id) => (
-                          <span
-                            key={id}
-                            className="rounded-full border border-emerald-800 px-2.5 py-0.5 text-xs text-emerald-200/80"
-                          >
-                            {titles.get(id)}
-                          </span>
-                        ))
-                      )}
-                    </div>
-                  )}
                 </Card>
               </li>
             ))}
